@@ -14,7 +14,7 @@ catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
 # COMMAND ----------
 
 # create user catalog if not exists
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name} MANAGED LOCATION 'abfss://catalogs@stacucmgmtcatalogs.dfs.core.windows.net/'")
 
 # use the user catalog
 spark.sql(f"USE CATALOG {catalog_name}")
@@ -22,13 +22,27 @@ spark.sql(f"USE CATALOG {catalog_name}")
 # COMMAND ----------
 
 # clone data from workshop catalog to your user catalog
-workshop_catalog = "opap_catalog"
+workshop_catalog = "fhgr_data"
 spark.sql(f"CREATE TABLE IF NOT EXISTS {catalog_name}.default.churn_modelling SHALLOW CLONE {workshop_catalog}.default.churn_modelling")
 
 # COMMAND ----------
 
 df = spark.table(f"{catalog_name}.default.churn_modelling")
 display(df)
+
+# COMMAND ----------
+
+# Read the data from the table using the table name
+df = spark.table(f"{catalog_name}.default.churn_modelling")
+
+# Write the data to DBFS
+dbfs_target_path = f"dbfs:/Workspace/Users/heiko.kromer@ms.d-one.ai/churn_modeling_data/"
+df.write.format("delta").mode("overwrite").save(dbfs_target_path)
+
+# COMMAND ----------
+
+json_files = dbutils.fs.ls(f"dbfs:/Workspace/Users/heiko.kromer@ms.d-one.ai/churn_modeling_data/")
+display(json_files)
 
 # COMMAND ----------
 
@@ -49,7 +63,7 @@ catalog_name
 # MAGIC -- add it without the string ('') markers
 # MAGIC
 # MAGIC -- SELECT * FROM user_catalog.default.churn_modelling
-# MAGIC SELECT * FROM panagiotis_goumenakis.default.churn_modelling
+# MAGIC SELECT * FROM heiko_kromer.default.churn_modelling
 
 # COMMAND ----------
 
@@ -212,8 +226,13 @@ print(df_v2.count(), len(df_v2.columns))
 
 # COMMAND ----------
 
-path = f"file:/Workspace/Users/{user_email}/churn_modelling.csv"
-# <TODO>
+# MAGIC %fs ls file:/Workspace/Users/heiko.kromer@ms.d-one.ai/
+
+# COMMAND ----------
+
+path = f"file:/Workspace/Users/heiko.kromer@ms.d-one.ai/churn_modelling.csv"
+df = spark.read.format("csv").option("header", True).load(path)
+display(df)
 
 # COMMAND ----------
 
@@ -223,7 +242,7 @@ path = f"file:/Workspace/Users/{user_email}/churn_modelling.csv"
 # COMMAND ----------
 
 table_name = "my_uploaded_churn_modelling_table"
-# <TODO>
+df.write.format("delta").saveAsTable("heiko_kromer.default.my_uploaded_churn_modelling_table")
 
 # COMMAND ----------
 
@@ -235,7 +254,7 @@ table_name = "my_uploaded_churn_modelling_table"
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC -- <TODO>
+# MAGIC DESCRIBE HISTORY heiko_kromer.default.my_uploaded_churn_modelling_table
 
 # COMMAND ----------
 
