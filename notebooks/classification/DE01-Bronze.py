@@ -1,17 +1,7 @@
 # Databricks notebook source
 # MAGIC %md 
 # MAGIC # Reading the data 
-# MAGIC In this tutorial you can use the Repos to read the data, as the data is part of the repository [brick-by-brick](https://github.com/d-one/brick-by-brick).
-# MAGIC
-# MAGIC Please change the name inside the `path` to your own.
-# MAGIC The dataset is called `churn_modelling.csv`.
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Let's check if you can source the file using [dbutils](https://learn.microsoft.com/en-us/azure/databricks/dev-tools/databricks-utils)
-# MAGIC
-# MAGIC Make sure to change the `PATH` to your own directory.
+# MAGIC In this tutorial you can use the Repos to read the data, as the data is part of the repository [brick-by-brick](https://github.com/d-one/brick-by-brick). It is stored in the catalog `fhgr_data`. Try to load it!
 
 # COMMAND ----------
 
@@ -21,9 +11,8 @@ catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
 
 # COMMAND ----------
 
-path = f"file:/Workspace/Repos/{user_email}/brick-by-brick/data/churn_modelling.csv"
+path = "fhgr_data.default.churn_modelling"
 
-dbutils.fs.ls(path)
 
 # COMMAND ----------
 
@@ -32,10 +21,8 @@ dbutils.fs.ls(path)
 
 # COMMAND ----------
 
-try:
-    df_churn_raw = spark.read.format("csv").option("header", "true").load(path)
-except:
-    print("File does not exist, please make sure that your path is correct and that you have pulled the repository to databricks repos")
+df_churn_raw = spark.read.table(path)
+
 
 # COMMAND ----------
 
@@ -45,7 +32,7 @@ df_churn_raw.display()
 
 spark.sql(
     f"""
-    CREATE CATALOG IF NOT EXISTS {catalog_name}
+    CREATE CATALOG IF NOT EXISTS {catalog_name} MANAGED LOCATION 'abfss://catalogs@stacucmgmtcatalogs.dfs.core.windows.net/'
     """
 )
 
@@ -137,9 +124,6 @@ dbutils.notebook.exit("End of notebook when running as a workflow task")
 # Do exercise here
 
 
-
-
-
 # COMMAND ----------
 
 # MAGIC %md 
@@ -147,13 +131,7 @@ dbutils.notebook.exit("End of notebook when running as a workflow task")
 
 # COMMAND ----------
 
-df_history = spark.sql(
-    f"""
-    DESCRIBE HISTORY {catalog_name}.{schema_name}.{table_name}
-    """
-)
 
-display(df_history)
 
 # COMMAND ----------
 

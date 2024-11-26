@@ -32,16 +32,20 @@ display(df)
 
 # COMMAND ----------
 
+user_email
+
+# COMMAND ----------
+
 # Read the data from the table using the table name
 df = spark.table(f"{catalog_name}.default.churn_modelling")
 
 # Write the data to DBFS
-dbfs_target_path = f"dbfs:/Workspace/Users/heiko.kromer@ms.d-one.ai/churn_modeling_data/"
+dbfs_target_path = f"dbfs:/Workspace/Users/{user_email}/churn_modeling_data/"
 df.write.format("delta").mode("overwrite").save(dbfs_target_path)
 
 # COMMAND ----------
 
-json_files = dbutils.fs.ls(f"dbfs:/Workspace/Users/heiko.kromer@ms.d-one.ai/churn_modeling_data/")
+json_files = dbutils.fs.ls(f"dbfs:/Workspace/Users/{user_email}/churn_modeling_data/")
 display(json_files)
 
 # COMMAND ----------
@@ -87,7 +91,7 @@ df.display()
 # MAGIC -- add it without the string ('') markers
 # MAGIC CREATE OR REPLACE TEMPORARY VIEW temptable_sql_churn_modelling
 # MAGIC AS
-# MAGIC SELECT * FROM panagiotis_goumenakis.default.churn_modelling
+# MAGIC SELECT * FROM heiko_kromer.default.churn_modelling
 
 # COMMAND ----------
 
@@ -170,7 +174,7 @@ print(df_v2.count(), len(df_v2.columns))
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC SELECT count(*) FROM panagiotis_goumenakis.default.churn_modelling VERSION AS OF 0
+# MAGIC SELECT count(*) FROM heiko_kromer.default.churn_modelling VERSION AS OF 0
 
 # COMMAND ----------
 
@@ -241,8 +245,7 @@ display(df)
 
 # COMMAND ----------
 
-table_name = "my_uploaded_churn_modelling_table"
-df.write.format("delta").saveAsTable("heiko_kromer.default.my_uploaded_churn_modelling_table")
+
 
 # COMMAND ----------
 
@@ -254,7 +257,7 @@ df.write.format("delta").saveAsTable("heiko_kromer.default.my_uploaded_churn_mod
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC DESCRIBE HISTORY heiko_kromer.default.my_uploaded_churn_modelling_table
+# MAGIC
 
 # COMMAND ----------
 

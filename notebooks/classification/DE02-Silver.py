@@ -106,7 +106,7 @@ dbutils.notebook.exit("End of notebook when running as a workflow task")
 schema_name = "silver"
 table_name = "churn_modelling"
 
-df_churn_silver.write.format("delta").mode("overwrite").option("mergeSchema", "true").saveAsTable(f"{catalog_name}.{schema_name}.{table_name}_testmerg")
+df_churn_silver.write.format("delta").mode("overwrite").option("mergeSchema", "true").saveAsTable(f"{catalog_name}.{schema_name}.{table_name}_testmerge")
 
 
 # COMMAND ----------
@@ -127,10 +127,7 @@ df_churn_silver_mergeSchema = (
 
 # COMMAND ----------
 
-(df_churn_silver_mergeSchema
-    .write.format("delta")
-    .mode("overwrite")
-    .saveAsTable(f"{catalog_name}.{schema_name}.{table_name}_testmerge"))
+
 
 # COMMAND ----------
 
@@ -139,4 +136,8 @@ df_churn_silver_mergeSchema = (
 
 # COMMAND ----------
 
-df_churn_silver_mergeSchema.write.format("delta").mode("overwrite").option("mergeSchema", "true").saveAsTable(f"{catalog_name}.{schema_name}.{table_name}_testmerge")
+
+
+# COMMAND ----------
+
+
