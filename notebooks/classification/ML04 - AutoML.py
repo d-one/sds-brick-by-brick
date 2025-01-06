@@ -32,6 +32,9 @@
 user_email = spark.sql('select current_user() as user').collect()[0]['user']
 catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
 
+print(f"User Email is {user_email}")
+print(f"Catalog Name is {catalog_name}")
+
 # COMMAND ----------
 
 schema_name = "silver"
@@ -65,7 +68,7 @@ train_df, test_df, _, _ = train_test_split(enriched_df, enriched_df[["Exited"]].
 # MAGIC * **`dataset`** - Input Spark or pandas DataFrame that contains training features and targets. If using a Spark DataFrame, it will convert it to a Pandas DataFrame under the hood by calling .toPandas() - just be careful you don't OOM!
 # MAGIC * **`target_col`** - Column name of the target labels
 # MAGIC
-# MAGIC We will also specify these optional parameters:
+# MAGIC We will also specify optional parameters (https://docs.databricks.com/en/machine-learning/automl/automl-api-reference.html):
 # MAGIC * **`primary_metric`** - Primary metric to select the best model. Each trial will compute several metrics, but this one determines which model is selected from all the trials. One of **`f1`** (default, f1 score), **`log_loss`** (logistic loss or cross-entropy loss), **`precision`**, **`accuracy`**, **`roc_auc`** for classification problems.
 # MAGIC * **`timeout_minutes`** - The maximum time to wait for the AutoML trials to complete. **`timeout_minutes=None`** will run the trials without any timeout restrictions
 # MAGIC * **`max_trials`** - The maximum number of trials to run. When **`max_trials=None`**, maximum number of trials will run to completion.
@@ -123,3 +126,7 @@ from pyspark.ml.evaluation import BinaryClassificationEvaluator
 classification_evaluator = BinaryClassificationEvaluator(rawPredictionCol="prediction" ,labelCol="Exited", metricName="areaUnderROC")
 auc = classification_evaluator.evaluate(pred_sdf)
 print(f"auc score on test dataset: {auc:.3f}")
+
+# COMMAND ----------
+
+

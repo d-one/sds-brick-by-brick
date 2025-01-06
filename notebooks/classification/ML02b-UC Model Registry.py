@@ -78,6 +78,9 @@ from sklearn.model_selection import train_test_split
 user_email = spark.sql('select current_user() as user').collect()[0]['user']
 catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
 
+print(f"User Email is {user_email}")
+print(f"Catalog Name is {catalog_name}")
+
 # COMMAND ----------
 
 schema_name = "silver"
@@ -154,7 +157,7 @@ model_details = mlflow.register_model(model_uri=model_uri, name=model_name)
 # MAGIC %md-sandbox <i18n value="fe857eeb-6119-4927-ad79-77eaa7bffe3a"/>
 # MAGIC
 # MAGIC
-# MAGIC  **Open the *Catalog* tab on the left of the screen, navifate to your user catalog and silver shcema and explore the registered model.**  Note the following:<br><br>
+# MAGIC  **Open the *Catalog* tab on the left of the screen, navifate to your user catalog and silver schema and explore the registered model.**  Note the following:<br><br>
 # MAGIC
 # MAGIC * It logged who trained the model and what code was used
 # MAGIC * It logged a history of actions taken on this model

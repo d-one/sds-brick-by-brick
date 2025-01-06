@@ -12,7 +12,7 @@
 # MAGIC
 # MAGIC # Pre processing
 # MAGIC
-# MAGIC In any data science project, feaure engineering is very important  seeks to address these folowing points:
+# MAGIC In any data science project, feature engineering is very important  seeks to address these following points:
 # MAGIC
 # MAGIC * Analyze your data and figure out what to use from them 
 # MAGIC * Define and extract a set of features that represent data that's important for the analysis (feature extraction)
@@ -31,7 +31,10 @@ import re
 # user parameters
 user_email = spark.sql('select current_user() as user').collect()[0]['user']
 catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
-workshop_catalog_name = "opap_catalog"
+workshop_catalog_name = "fhgr_data"
+
+print(f"User Email is {user_email}")
+print(f"Catalog Name is {catalog_name}")
 
 # COMMAND ----------
 
@@ -39,14 +42,14 @@ schema_name = "bronze"
 table_name = "churn_modelling"
 
 # create catalog if not exists
-spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name}")
+spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog_name} MANAGED LOCATION 'abfss://catalogs@stacucmgmtcatalogs.dfs.core.windows.net/'")
 
 # create schema if not exists
 spark.sql(f"CREATE SCHEMA IF NOT EXISTS {catalog_name}.{schema_name}") 
 
 # if bronze table not available, clone it from workshop catalog
 if table_name not in spark.sql(f"SHOW TABLES IN {catalog_name}.{schema_name}").toPandas()['tableName'].tolist():
-    spark.sql(f"CREATE TABLE IF NOT EXISTS {catalog_name}.{schema_name}.{table_name} SHALLOW CLONE {workshop_catalog_name}.{schema_name}.{table_name}") 
+    spark.sql(f"CREATE TABLE IF NOT EXISTS {catalog_name}.{schema_name}.{table_name} SHALLOW CLONE {workshop_catalog_name}.default.churn_modelling") 
 
 sdf_raw = spark.read.table(f"{catalog_name}.{schema_name}.{table_name}")
 

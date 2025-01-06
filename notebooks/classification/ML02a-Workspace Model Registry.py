@@ -90,6 +90,9 @@ from sklearn.model_selection import train_test_split
 user_email = spark.sql('select current_user() as user').collect()[0]['user']
 catalog_name = user_email.split('@')[0].replace(".", "_").replace("-", "_")
 
+print(f"User Email is {user_email}")
+print(f"Catalog Name is {catalog_name}")
+
 # COMMAND ----------
 
 schema_name = "silver"
